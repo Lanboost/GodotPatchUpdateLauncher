@@ -3,4 +3,11 @@
     <TargetFramework>net6.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="patchlibrary\**" />
+    <EmbeddedResource Remove="patchlibrary\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="patchlibrary\PatchLibrary\PatchLibrary.csproj" />
+  </ItemGroup>
 </Project>

@@ -1,12 +1,20 @@
-﻿Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleGodotLauncher", "ExampleGodotLauncher.csproj", "{C6011296-36B3-439D-8CB1-90A7C5749458}"
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33424.131
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleGodotLauncher", "ExampleGodotLauncher.csproj", "{C6011296-36B3-439D-8CB1-90A7C5749458}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PatchLibrary", "patchlibrary\PatchLibrary\PatchLibrary.csproj", "{09318728-FD32-4192-9F38-8BA08F1130B7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PathLibraryTest", "patchlibrary\PathLibraryTest\PathLibraryTest.csproj", "{002D016A-227E-4951-9D6F-3B855054584C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-	Debug|Any CPU = Debug|Any CPU
-	ExportDebug|Any CPU = ExportDebug|Any CPU
-	ExportRelease|Any CPU = ExportRelease|Any CPU
+		Debug|Any CPU = Debug|Any CPU
+		ExportDebug|Any CPU = ExportDebug|Any CPU
+		ExportRelease|Any CPU = ExportRelease|Any CPU
+		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{C6011296-36B3-439D-8CB1-90A7C5749458}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -15,5 +23,29 @@ Global
 		{C6011296-36B3-439D-8CB1-90A7C5749458}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
 		{C6011296-36B3-439D-8CB1-90A7C5749458}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
 		{C6011296-36B3-439D-8CB1-90A7C5749458}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
+		{C6011296-36B3-439D-8CB1-90A7C5749458}.Release|Any CPU.ActiveCfg = ExportRelease|Any CPU
+		{C6011296-36B3-439D-8CB1-90A7C5749458}.Release|Any CPU.Build.0 = ExportRelease|Any CPU
+		{09318728-FD32-4192-9F38-8BA08F1130B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09318728-FD32-4192-9F38-8BA08F1130B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09318728-FD32-4192-9F38-8BA08F1130B7}.ExportDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09318728-FD32-4192-9F38-8BA08F1130B7}.ExportDebug|Any CPU.Build.0 = Debug|Any CPU
+		{09318728-FD32-4192-9F38-8BA08F1130B7}.ExportRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{09318728-FD32-4192-9F38-8BA08F1130B7}.ExportRelease|Any CPU.Build.0 = Release|Any CPU
+		{09318728-FD32-4192-9F38-8BA08F1130B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09318728-FD32-4192-9F38-8BA08F1130B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{002D016A-227E-4951-9D6F-3B855054584C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{002D016A-227E-4951-9D6F-3B855054584C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{002D016A-227E-4951-9D6F-3B855054584C}.ExportDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{002D016A-227E-4951-9D6F-3B855054584C}.ExportDebug|Any CPU.Build.0 = Debug|Any CPU
+		{002D016A-227E-4951-9D6F-3B855054584C}.ExportRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{002D016A-227E-4951-9D6F-3B855054584C}.ExportRelease|Any CPU.Build.0 = Release|Any CPU
+		{002D016A-227E-4951-9D6F-3B855054584C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{002D016A-227E-4951-9D6F-3B855054584C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E51A2C9A-5684-40CA-87D6-609F2C3499CA}
 	EndGlobalSection
 EndGlobal
