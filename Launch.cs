@@ -1,208 +1,175 @@
+using Godot;
+using PatchLibrary;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using static Godot.WebSocketPeer;
 
 public partial class Launch : Godot.Control
 {
-    public enum EState
-    {
-        None,
-        FetchingVersion,
-        FetchingPatchData,
-        FetchingPatch,
-        InstallingPatch,
-        UpToDate
-    }
+    [Godot.Export]
+    public Godot.PackedScene GameScene;
+
+    // SETTINGS
+    [Godot.Export]
+    public string BaseHost = "http://localhost:10000";
 
     [Godot.Export]
+    public Godot.Button playButton;
 
-    public Godot.Button loginButton;
+    [Godot.Export]
+    public Godot.Label progressLabel;
 
-    public string base_host = "http://www.google.com/";
+    [Godot.Export]
+    public Godot.ProgressBar progressBar;
 
-    Task runningTask;
+    [Godot.Export]
+    public Godot.Label overallProgressLabel;
+
+    [Godot.Export]
+    public Godot.ProgressBar progressBarOverall;
+
+    [Godot.Export]
+    public Godot.Label versionLabel;
+
+    IEnumerator<bool> updating = null;
+    Updater updater;
     public override void _Ready()
     {
         base._Ready();
-        loginButton.Pressed += LoginButton_Pressed;
+        playButton.Pressed += PlayButton_Pressed;
+
+
+        var mainDir = new DirectoryInfo(Directory.GetCurrentDirectory());
+        updater = new Updater(mainDir, BaseHost);
+
+        updater.PatchProgressOnChanged += (sender) =>
+        {
+            this.CallDeferred("UpdateProgress");
+        };
+        updater.PatchOverallProgressOnChanged += (sender) =>
+        {
+            this.CallDeferred("UpdateProgress");
+        };
+
+        updater.CurrentVersionOnChanged += (sender) =>
+        {
+            this.CallDeferred("UpdateVersionLabel");
+        };
+
+        updater.LatestVersionOnChanged += (sender) =>
+        {
+            this.CallDeferred("UpdateVersionLabel");
+        };
+
+        updater.StateOnChanged += (sender) =>
+        {
+            this.CallDeferred("UpdateVersionLabel");
+            this.CallDeferred("UpdatePlayButton");
+        };
+
+        updater.CurrentPatchMessageOnChanged += (sender) =>
+        {
+            this.CallDeferred("UpdatePatchLabel");
+        };
+
+
+        //var dir = Directory.GetCurrentDirectory();
+        /*
+        var tt = new DirectoryInfo(Path.Combine(dir, "test11"));
+        foreach (var (curr, max, inst) in PatchLibrary.Patch.ApplyPatch(output, tt)) {
+            GD.Print($" {curr} / {max} {inst}");
+        }*/
+
+
+        Dictionary<string, string> arguments = new Dictionary<string, string>();
+        foreach(var argument in OS.GetCmdlineUserArgs())
+        {
+            if (argument.Contains("="))
+            {
+                var splitted = argument.Split("=");
+                arguments.Add(splitted[0].TrimStart('-'), splitted[1]);
+            }
+            else
+            {
+                arguments.Add(argument.TrimStart('-'), null);
+            }
+        }
+
+        if(arguments.ContainsKey("createpatch"))
+        {
+            // TODO parse user input better...
+
+            var output = new FileInfo(arguments["output"]);
+            var from = new DirectoryInfo(arguments["from"]);
+            var to = new DirectoryInfo(arguments["to"]);
+            PatchLibrary.Patch.CreatePatch(output, from, to);
+        }
+        else
+        {
+            updating = updater.RunUpdateEnumerable();
+        }
+    }
+
+    void UpdateVersionLabel()
+    {
+        if (updater.State == EState.Error)
+        {
+            versionLabel.Text = $"Error";
+        }
+        else if (updater.State == EState.UpToDate || updater.State == EState.None)
+        {
+            versionLabel.Text = $"{updater.CurrentVersion}";
+        }
+        else
+        {
+            versionLabel.Text = $"{updater.CurrentVersion} -> {updater.LatestVersion}";
+        }
+    }
+
+    void UpdateProgress()
+    {
+        progressBar.MinValue = 0;
+        progressBar.MaxValue = 100;
+        progressBar.Value = updater.PatchProgress;
+        progressBarOverall.MinValue = 0;
+        progressBarOverall.MaxValue = 100;
+        progressBarOverall.Value = updater.PatchOverallProgress;
+    }
+
+    void UpdatePlayButton()
+    {
+        playButton.Disabled = updater.State != EState.UpToDate;
+    }
+
+    void UpdatePatchLabel()
+    {
+        this.progressLabel.Text = updater.CurrentPatchMessage;
     }
 
     public override void _Process(double delta)
     {
         base._Process(delta);
-        if(runningTask != null)
+        if(updating != null)
         {
-            if(runningTask.IsCompleted)
+            GD.Print("Test");
+            if(!updating.MoveNext())
             {
-                runningTask = null;
+                updating = null;
+                GD.Print("done");
             }
         }
     }
 
-    private void LoginButton_Pressed()
+    private void PlayButton_Pressed()
     {
-        StartFetchingLatestVersion();
+        var nextScene = GameScene.Instantiate();
+        var oldScene = GetTree().Root.GetChild(0);
+        GetTree().Root.AddChild(nextScene);
+        oldScene.QueueFree();
+
+        // Dont forget to apply settings in new scene
     }
-
-    public delegate void PropertyChangeEvent(object sender);
-
-    protected EState _State = EState.None;
-    #region property change event
-    public EState State
-    {
-        get => _State;
-        set
-        {
-            if (_State == value)
-            {
-                return;
-            }
-            _State = value;
-            StateOnChanged?.Invoke(this);
-        }
-    }
-    public event PropertyChangeEvent StateOnChanged;
-    #endregion
-
-    protected string _CurrentVersion;
-    #region property change event
-    public string CurrentVersion
-    {
-        get => _CurrentVersion;
-        set
-        {
-            if (_CurrentVersion == value)
-            {
-                return;
-            }
-            _CurrentVersion = value;
-            CurrentVersionOnChanged?.Invoke(this);
-        }
-    }
-    public event PropertyChangeEvent CurrentVersionOnChanged;
-    #endregion
-
-
-    protected string _LatestVersion;
-    #region property change event
-    public string LatestVersion
-    {
-        get => _LatestVersion;
-        set
-        {
-            if (_LatestVersion == value)
-            {
-                return;
-            }
-            _LatestVersion = value;
-            LatestVersionOnChanged?.Invoke(this);
-        }
-    }
-    public event PropertyChangeEvent LatestVersionOnChanged;
-    #endregion
-
-
-    protected int _PatchProgress;
-    #region property change event
-    public int PatchProgress
-    {
-        get => _PatchProgress;
-        set
-        {
-            if (_PatchProgress == value)
-            {
-                return;
-            }
-            _PatchProgress = value;
-            PatchProgressOnChanged?.Invoke(this);
-        }
-    }
-    public event PropertyChangeEvent PatchProgressOnChanged;
-    #endregion
-
-
-
-
-
-    public class Result<T>
-    {
-        public bool Success;
-        public string Error;
-        public T Value;
-
-        public static Result<T> Fail(string message)
-        {
-            var r = new Result<T>();
-            r.Success = false;
-            r.Error = message;
-            return r;
-        }
-
-        public static Result<T> Ok(T va)
-        {
-            var r = new Result<T>();
-            r.Success = true;
-            r.Value = va;
-            return r;
-        }
-    }
-
-    public void StartFetchingLatestVersion()
-    {
-        if (runningTask != null)
-        {
-            return;
-        }
-        State = EState.FetchingVersion;
-        runningTask = Task.Run(async () => await FetchLatestVersion());
-    }
-
-    public async Task FetchLatestVersion()
-    {
-        using (HttpClient wc = new HttpClient())
-        {
-            try
-            {
-                var data = await wc.GetStringAsync(base_host);
-            }
-            catch (HttpRequestException e) {
-                Godot.GD.Print(e.Message);
-                Godot.GD.Print("Failed to fetch update information.");
-                return;
-            }
-            catch (InvalidOperationException e)
-            {
-                Godot.GD.Print(e.Message);
-                Godot.GD.Print("InvalidOperationException .");
-                return;
-            }
-            catch (TaskCanceledException e)
-            {
-                Godot.GD.Print(e.Message);
-                Godot.GD.Print("Canceled.");
-                return;
-            }
-        }
-
-        Godot.GD.Print("Hello world.");
-    }
-
-    public async Task FetchPatchData(string from, string to)
-    {
-        
-    }
-
-    public async Task FetchFile(string file)
-    {
-        
-    }
-
-    public async Task<Result<byte[]>> FetchPckFile(string file)
-    {
-        throw new Exception();
-    }
-
-
-
 }

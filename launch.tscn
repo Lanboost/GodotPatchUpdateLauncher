@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://Launch.cs" id="1_e4n0g"]
 [ext_resource type="Texture2D" uid="uid://cdqpiwfxfeylv" path="res://header.png" id="1_wf2f6"]
 
-[node name="Control" type="Control" node_paths=PackedStringArray("loginButton")]
+[node name="Control" type="Control" node_paths=PackedStringArray("playButton", "progressLabel", "progressBar", "overallProgressLabel", "progressBarOverall", "versionLabel")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,7 +11,12 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_e4n0g")
-loginButton = NodePath("Panel/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer/Button")
+playButton = NodePath("Panel/MarginContainer/VBoxContainer/HBoxContainer2/Button")
+progressLabel = NodePath("Panel/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/Label")
+progressBar = NodePath("Panel/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/ProgressBar")
+overallProgressLabel = NodePath("Panel/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/Label2")
+progressBarOverall = NodePath("Panel/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/ProgressBar2")
+versionLabel = NodePath("Panel/MarginContainer2/HBoxContainer/Label2")
 
 [node name="Panel" type="Panel" parent="."]
 layout_mode = 1
@@ -31,7 +36,7 @@ grow_vertical = 2
 theme_override_constants/margin_left = 30
 theme_override_constants/margin_top = 30
 theme_override_constants/margin_right = 30
-theme_override_constants/margin_bottom = 30
+theme_override_constants/margin_bottom = 50
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer"]
 layout_mode = 2
@@ -130,14 +135,33 @@ size_flags_vertical = 3
 layout_mode = 2
 theme_override_constants/separation = 30
 
-[node name="ProgressBar" type="ProgressBar" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer2"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer"]
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="ProgressBar" type="ProgressBar" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+
+[node name="Label2" type="Label" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer"]
+layout_mode = 2
+text = "Patch Progress"
+horizontal_alignment = 1
+
+[node name="ProgressBar2" type="ProgressBar" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 
 [node name="Button" type="Button" parent="Panel/MarginContainer/VBoxContainer/HBoxContainer2"]
-custom_minimum_size = Vector2(100, 50)
+custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
+disabled = true
 text = "Play"
 
 [node name="MarginContainer2" type="MarginContainer" parent="Panel"]
@@ -153,8 +177,16 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="Label" type="Label" parent="Panel/MarginContainer2"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/MarginContainer2"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 8
+
+[node name="Label" type="Label" parent="Panel/MarginContainer2/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 8
 text = "Version: "
+
+[node name="Label2" type="Label" parent="Panel/MarginContainer2/HBoxContainer"]
+layout_mode = 2
