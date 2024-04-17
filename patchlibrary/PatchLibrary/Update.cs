@@ -60,6 +60,7 @@ namespace PatchLibrary
         public event PropertyChangeEvent CurrentVersionOnChanged;
         #endregion
 
+        public bool DidPatch = false;
 
         protected long _LatestVersion;
         #region property change event
@@ -214,8 +215,16 @@ namespace PatchLibrary
             return (int)(((double)curr * 100) / max);
         }
 
+        long GetCurrentVersion()
+        {
+            string text = File.ReadAllText(mainFolder.File("version.dat").FullName);
+            return long.Parse(text);
+        }
+
         public async Task InternalUpdate()
         {
+            CurrentVersion = GetCurrentVersion();
+
             try
             {
                 State = EState.FetchingVersion;
@@ -224,8 +233,15 @@ namespace PatchLibrary
                 {
                     return;
                 }
+                if(latestVersion == CurrentVersion)
+                {
+                    State = EState.UpToDate;
+                    return;
+                }
+                DidPatch = true;
 
                 LatestVersion = latestVersion;
+
                 var patchFiles = await FetchPatches(CurrentVersion, LatestVersion);
                 for (int i = 0; i < patchFiles.Length; i++)
                 {

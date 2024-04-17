@@ -159,6 +159,11 @@ public partial class Launch : Godot.Control
             {
                 updating = null;
                 GD.Print("done");
+                if(updater.DidPatch)
+                {
+                    System.Diagnostics.Process.Start(System.Reflection.Assembly.GetExecutingAssembly().Location); // to start new instance of application
+                    GetTree().Quit();
+                }
             }
         }
     }

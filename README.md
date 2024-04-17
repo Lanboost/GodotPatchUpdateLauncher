@@ -7,8 +7,12 @@ A patcher / updater written for Godot (And PCK files), but should work fine for 
 - [Done] Able to apply patches
 - [Done] Able to create patches
 - Able to run without PCK files
-- Able to fetch patches from the internet
+- [Done] Able to fetch patches from the internet
+- Ensure everything actually works good...
 
+# Issues
+
+- If a patch changes the patcher code, it will crash, add force reload to patch api...
 
 # How to use
 
